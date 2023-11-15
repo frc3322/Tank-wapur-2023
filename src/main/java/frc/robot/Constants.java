@@ -16,4 +16,15 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  public static final class CAN {
+    // Drivetrain motors
+    public static final int FL = 12;
+    public static final int FR = 2;
+    public static final int BL = 9;
+    public static final int BR = 17;
+  }
+
+
+  
 }
+
