@@ -18,13 +18,32 @@ public final class Constants {
   }
   public static final class CAN {
     // Drivetrain motors
-    public static final int FL = 12;
-    public static final int FR = 2;
-    public static final int BL = 9;
-    public static final int BR = 17;
+    public static final int FL = 6;
+    public static final int FR = 5;
+    public static final int BL = 36;
+    public static final int BR = 0; // NOT FINAL - UPDATE WHEN AVAILABLE -
+
+    // Shelf motor can id
+    public static final int shelfMotorLeft = 100;
+    public static final int shelfMotorRight = 101;
+
+
+    // yoga ball pickup/launcher
+    public static final int ballLeftMotor = 111;
+    public static final int ballRightMotor = 222;
   }
 
+  public static final class shelfConstants {
+    // Motor speed of the shelf extension motor, negated when retracting
+    public static final int shelfMotorSpeed = 5;
 
-  
+    // Limit in encoder whatever units untill the pusher is fully extended
+    public static final int shelfExtensionLimit = 10;
+  }
+
+  public static final class yogaBallConstants {
+    // volts to use when picking up or dropping the ball
+    public static final int yogaBallVolts = 5;
+  }
 }
 

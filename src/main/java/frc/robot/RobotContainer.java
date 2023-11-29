@@ -9,9 +9,13 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Shelf;
+import frc.robot.subsystems.YogaBallLauncher;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -22,11 +26,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  
-  
-
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
+  private final YogaBallLauncher yogaBallLauncher = new YogaBallLauncher();
+  private final Shelf shelfLeft = new Shelf(Constants.CAN.shelfMotorLeft);
+  private final Shelf shelfRight = new Shelf(Constants.CAN.shelfMotorRight);
   private final CommandXboxController driverController = new CommandXboxController(0);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -54,9 +58,14 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    driverController.rightBumper().whileTrue(new StartEndCommand(()->yogaBallLauncher.spinIntake(Constants.yogaBallConstants.yogaBallVolts), ()->yogaBallLauncher.spinIntake(0), yogaBallLauncher));
+
+    driverController.leftBumper().whileTrue(new StartEndCommand(()->yogaBallLauncher.spinIntake(-Constants.yogaBallConstants.yogaBallVolts), ()->yogaBallLauncher.spinIntake(0), yogaBallLauncher));
     
-    
-        drivetrain.setDefaultCommand(driveCommand);
+    driverController.x().onTrue(new InstantCommand(()->shelfLeft.toggleShelf(), shelfLeft));
+    driverController.b().onTrue(new InstantCommand(()->shelfRight.toggleShelf(), shelfRight));
+
+    drivetrain.setDefaultCommand(driveCommand);
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     

@@ -4,14 +4,73 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Shelf extends SubsystemBase {
   /** Creates a new Shelf. */
-  public Shelf() {}
+  private final CANSparkMax axleMotor;
+
+  private final RelativeEncoder shelfEncoder;
+
+  public Shelf(int CANid) {
+    axleMotor = new CANSparkMax(CANid, MotorType.kBrushless);
+
+    shelfEncoder = axleMotor.getEncoder();
+
+    axleMotor.setIdleMode(IdleMode.kBrake);
+
+    axleMotor.burnFlash();
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public Boolean extended() {
+    //return true if the encoder is past or at 1
+    return shelfEncoder.getPosition() >= Constants.shelfConstants.shelfExtensionLimit;
+  }
+
+  public Boolean retracted() {
+    //return true if the encoder is at or less than 0 
+    return shelfEncoder.getPosition() <= 0;
+  }
+
+  public void setMotorSpeed(double speed) {
+    axleMotor.set(speed);
+  }
+
+  public Command extendShelf() {
+      //flips to bottom, does not spin. may be able to delete
+      return new RunCommand(
+        () -> setMotorSpeed(Constants.shelfConstants.shelfMotorSpeed)
+      )
+      .until(()->extended());
+    }
+
+  public Command retractShelf() {
+    //flips to bottom, does not spin. may be able to delete
+    return new RunCommand(
+      () -> setMotorSpeed(-Constants.shelfConstants.shelfMotorSpeed)
+    )
+    .until(()->retracted());
+  }
+
+  public Command toggleShelf() {
+    if (retracted()) {
+      return extendShelf();
+    }
+    else {
+      return retractShelf();
+    }
   }
 }
