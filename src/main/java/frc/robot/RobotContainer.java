@@ -29,8 +29,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private final YogaBallLauncher yogaBallLauncher = new YogaBallLauncher();
-  private final Shelf shelfLeft = new Shelf(Constants.CAN.shelfMotorLeft);
-  private final Shelf shelfRight = new Shelf(Constants.CAN.shelfMotorRight);
+  private final Shelf shelfLeft = new Shelf(Constants.CAN.shelfMotorLeft, true);
+  private final Shelf shelfRight = new Shelf(Constants.CAN.shelfMotorRight, false);
   private final CommandXboxController driverController = new CommandXboxController(0);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed

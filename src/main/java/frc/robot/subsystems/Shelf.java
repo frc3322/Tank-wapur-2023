@@ -20,7 +20,9 @@ public class Shelf extends SubsystemBase {
 
   private final RelativeEncoder shelfEncoder;
 
-  public Shelf(int CANid) {
+  private final boolean reverse;
+
+  public Shelf(int CANid, boolean reverse) {
     axleMotor = new CANSparkMax(CANid, MotorType.kBrushless);
 
     shelfEncoder = axleMotor.getEncoder();
@@ -28,6 +30,8 @@ public class Shelf extends SubsystemBase {
     axleMotor.setIdleMode(IdleMode.kBrake);
 
     axleMotor.burnFlash();
+
+    this.reverse = reverse;
   }
 
   @Override
@@ -37,6 +41,9 @@ public class Shelf extends SubsystemBase {
 
   public Boolean extended() {
     //return true if the encoder is past or at 1
+    if (this.reverse) {
+      return shelfEncoder.getPosition() >= -Constants.shelfConstants.shelfExtensionLimit;
+    }
     return shelfEncoder.getPosition() >= Constants.shelfConstants.shelfExtensionLimit;
   }
 
@@ -46,6 +53,9 @@ public class Shelf extends SubsystemBase {
   }
 
   public void setMotorSpeed(double speed) {
+    if (this.reverse){
+      axleMotor.set(-speed);
+    }
     axleMotor.set(speed);
   }
 

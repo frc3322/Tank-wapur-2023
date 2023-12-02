@@ -18,10 +18,10 @@ public final class Constants {
   }
   public static final class CAN {
     // Drivetrain motors
-    public static final int FL = 6;
+    public static final int FL = 13;
     public static final int FR = 5;
     public static final int BL = 36;
-    public static final int BR = 0; // NOT FINAL - UPDATE WHEN AVAILABLE -
+    public static final int BR = 42; // NOT FINAL - UPDATE WHEN AVAILABLE -
 
     // Shelf motor can id
     public static final int shelfMotorLeft = 100;
