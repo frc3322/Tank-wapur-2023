@@ -62,6 +62,25 @@ public class Drivetrain extends SubsystemBase {
     motorBR.burnFlash();
     motorBL.burnFlash();
   }
+
+  public double getDistance() {
+    return motorFR.getEncoder().getPosition();
+  }
+
+  public void autonDrive(double speed, double turn) {
+    
+    // to compensate for the turning/binding on one side, add x to turn
+    // turn = turn + x;
+
+    this.speed = speed;
+    this.turn = turn;
+
+    // robotDrive.arcadeDrive(accelLimit.calculate(speed), turnLimit.calculate(turn), false);
+    robotDrive.arcadeDrive(speed, turn, false);
+
+    robotDrive.feed();
+  }
+  
   public void resetEncoders() {
     motorFL.getEncoder().setPosition(0);
     motorFR.getEncoder().setPosition(0);

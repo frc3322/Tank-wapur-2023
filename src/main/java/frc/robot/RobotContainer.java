@@ -4,14 +4,15 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.DriveToDistance;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -23,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   
-  
+  SendableChooser<Command> autChooser = new SendableChooser<>();
 
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
@@ -42,6 +43,10 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     
+    autChooser.addOption("drive distance test", new TestDriveDist());
+    
+    SmartDashboard.putData("select autonomous", autChooser);
+
   }
 
   /**
@@ -54,8 +59,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
-    
         drivetrain.setDefaultCommand(driveCommand);
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
@@ -69,6 +72,18 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return autChooser.getSelected();
+  }
+
+  private class TestDriveDist extends SequentialCommandGroup{
+    private TestDriveDist(){
+        addCommands(
+            new InstantCommand(
+              () -> drivetrain.resetEncoders(),
+               drivetrain
+            ),
+            new DriveToDistance(3, drivetrain)
+        );
+    }
   }
 }
