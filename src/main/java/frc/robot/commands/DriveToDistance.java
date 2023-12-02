@@ -4,12 +4,13 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
-public class DriveToDistance extends PIDCommand {
+public class DriveToDistance extends ProfiledPIDCommand {
 
   private Drivetrain drivetrain;
   private double targetDistance;
@@ -17,13 +18,13 @@ public class DriveToDistance extends PIDCommand {
   /** Creates a new DriveToDistance. */
   public DriveToDistance(double targetDistance, Drivetrain drivetrain) {
     super(
-      new PIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI, Constants.DriveConstants.kDriveD),
+      new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI, Constants.DriveConstants.kDriveD, new TrapezoidProfile.Constraints(5, 10)),
         // Close loop on heading
         drivetrain::getDistance,
         // Set reference to target
         -targetDistance,
         // Pipe output to turn robot
-        output -> drivetrain.autonDrive(output,0),
+        (output, setpoint) -> drivetrain.autonDrive(output,0),
         // Require the drive
         drivetrain);
 
