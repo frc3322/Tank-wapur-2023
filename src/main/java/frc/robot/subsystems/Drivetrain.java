@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -13,7 +14,12 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Drivetrain extends SubsystemBase {
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
+
+public class Drivetrain extends SubsystemBase implements Loggable {
   private final CANSparkMax motorFR = new CANSparkMax(Constants.CAN.FR, MotorType.kBrushless);
   private final CANSparkMax motorFL = new CANSparkMax(Constants.CAN.FL, MotorType.kBrushless);
   private final CANSparkMax motorBR = new CANSparkMax(Constants.CAN.BR, MotorType.kBrushless);
@@ -25,6 +31,8 @@ public class Drivetrain extends SubsystemBase {
   private final RelativeEncoder BREncoder = motorBR.getEncoder();
   
   private final DifferentialDrive robotDrive = new DifferentialDrive(motorFL, motorFR);
+
+  private final AHRS gyro = new AHRS();
 
   private double speed = -2;
   private double turn = -2;
@@ -65,6 +73,16 @@ public class Drivetrain extends SubsystemBase {
 
   public double getDistance() {
     return motorFR.getEncoder().getPosition();
+  }
+
+  @Log
+  public double getYaw() {
+    return gyro.getYaw();
+  }
+
+  // Setters
+  public void resetGyro() {
+    gyro.reset();
   }
 
   public void autonDrive(double speed, double turn) {

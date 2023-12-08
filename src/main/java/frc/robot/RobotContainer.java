@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.DriveToDistance;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,6 +16,9 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Config;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -44,9 +48,20 @@ public class RobotContainer {
     configureBindings();
     
     autChooser.addOption("drive distance test", new TestDriveDist());
+
+    autChooser.addOption("turn to angle test", new TestTurnToAngle());
+
+    autChooser.addOption("Test Auton", new TestAuton());
     
     SmartDashboard.putData("select autonomous", autChooser);
 
+    // The first argument is the root container
+    // The second argument is whether logging and config should be given separate tabs
+    Logger.configureLoggingAndConfig(this, false);
+  }
+
+  public void updateLogger() {
+    Logger.updateEntries();
   }
 
   /**
@@ -82,8 +97,30 @@ public class RobotContainer {
               () -> drivetrain.resetEncoders(),
                drivetrain
             ),
-            new DriveToDistance(3, drivetrain)
+            new DriveToDistance(5, drivetrain)
         );
+    }
+  }
+
+  private class TestTurnToAngle extends SequentialCommandGroup{
+    private TestTurnToAngle(){
+      addCommands(
+        new TurnToAngle(-90, drivetrain)
+      );
+    }
+  }
+
+  private class TestAuton extends SequentialCommandGroup{
+    private TestAuton(){
+      addCommands(
+        new InstantCommand(
+          () -> drivetrain.resetEncoders(),
+            drivetrain
+        ),
+        new DriveToDistance(5, drivetrain));
+
+      addCommands(
+      new TurnToAngle(180, drivetrain));
     }
   }
 }
