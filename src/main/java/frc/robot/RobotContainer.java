@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import io.github.oblarg.oblog.Logger;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -46,6 +48,11 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     
+    Logger.configureLoggingAndConfig(this, false);
+  }
+
+  public void updateLogging(){
+    Logger.updateEntries();
   }
 
   /**
@@ -61,9 +68,12 @@ public class RobotContainer {
     driverController.rightBumper().whileTrue(new StartEndCommand(()->yogaBallLauncher.spinIntake(Constants.yogaBallConstants.yogaBallVolts), ()->yogaBallLauncher.spinIntake(0), yogaBallLauncher));
 
     driverController.leftBumper().whileTrue(new StartEndCommand(()->yogaBallLauncher.spinIntake(-Constants.yogaBallConstants.yogaBallVolts), ()->yogaBallLauncher.spinIntake(0), yogaBallLauncher));
-    
-    driverController.x().onTrue(new InstantCommand(()->shelfLeft.toggleShelf(), shelfLeft));
-    driverController.b().onTrue(new InstantCommand(()->shelfRight.toggleShelf(), shelfRight));
+
+    driverController.x().onTrue(new StartEndCommand(()->shelfRight.spinAxle(2), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(8)); // RETRACT
+    driverController.b().onTrue(new StartEndCommand(()->shelfRight.spinAxle(-2), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(8));
+
+    driverController.y().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(2), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(8)); // RETRACT
+    driverController.a().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(-2), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(8));
 
     drivetrain.setDefaultCommand(driveCommand);
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,

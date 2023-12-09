@@ -14,6 +14,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
+
 public class Shelf extends SubsystemBase {
   /** Creates a new Shelf. */
   private final CANSparkMax axleMotor;
@@ -32,31 +36,47 @@ public class Shelf extends SubsystemBase {
     axleMotor.burnFlash();
 
     this.reverse = reverse;
+
+    shelfEncoder.setPosition(0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
   }
 
+  public void spinAxle(double volts) {
+    axleMotor.setVoltage(volts);
+  }
+
+  @Log
+  private double getPosition(){
+    return shelfEncoder.getPosition();
+  }
+
+  @Log
   public Boolean extended() {
     //return true if the encoder is past or at 1
     if (this.reverse) {
-      return shelfEncoder.getPosition() >= -Constants.shelfConstants.shelfExtensionLimit;
+      return getPosition() >= -Constants.shelfConstants.shelfExtensionLimit;
     }
-    return shelfEncoder.getPosition() >= Constants.shelfConstants.shelfExtensionLimit;
+    return getPosition() >= Constants.shelfConstants.shelfExtensionLimit;
   }
 
+  @Log
   public Boolean retracted() {
     //return true if the encoder is at or less than 0 
-    return shelfEncoder.getPosition() <= 0;
+    return getPosition() <= 0;
   }
 
   public void setMotorSpeed(double speed) {
     if (this.reverse){
-      axleMotor.set(-speed);
+      axleMotor.setVoltage(-speed);
     }
-    axleMotor.set(speed);
+    else {
+      axleMotor.setVoltage(speed);
+    }
   }
 
   public Command extendShelf() {

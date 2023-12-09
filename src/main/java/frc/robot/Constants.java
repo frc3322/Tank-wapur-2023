@@ -24,26 +24,26 @@ public final class Constants {
     public static final int BR = 42; // NOT FINAL - UPDATE WHEN AVAILABLE -
 
     // Shelf motor can id
-    public static final int shelfMotorLeft = 100;
-    public static final int shelfMotorRight = 101;
+    public static final int shelfMotorLeft = 37;
+    public static final int shelfMotorRight = 40;
 
 
     // yoga ball pickup/launcher
-    public static final int ballLeftMotor = 111;
-    public static final int ballRightMotor = 222;
+    public static final int ballBottomMotor = 4;
+    public static final int ballTopMotor = 8;
   }
 
   public static final class shelfConstants {
     // Motor speed of the shelf extension motor, negated when retracting
-    public static final int shelfMotorSpeed = 5;
+    public static final int shelfMotorSpeed = 2;
 
     // Limit in encoder whatever units untill the pusher is fully extended
-    public static final int shelfExtensionLimit = 10;
+    public static final int shelfExtensionLimit = 50;
   }
 
   public static final class yogaBallConstants {
     // volts to use when picking up or dropping the ball
-    public static final int yogaBallVolts = 5;
+    public static final int yogaBallVolts = 1;
   }
 }
 

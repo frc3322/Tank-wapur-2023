@@ -15,15 +15,15 @@ import frc.robot.Constants;
 public class YogaBallLauncher extends SubsystemBase {
   /** Creates a new YogaBallLauncher. */
 
-  private final CANSparkMax leftMotor = new CANSparkMax(Constants.CAN.ballLeftMotor, MotorType.kBrushless);
-  private final CANSparkMax rightMotor = new CANSparkMax(Constants.CAN.ballRightMotor, MotorType.kBrushless);
+  private final CANSparkMax bottomMotor = new CANSparkMax(Constants.CAN.ballBottomMotor, MotorType.kBrushless);
+  private final CANSparkMax topMotor = new CANSparkMax(Constants.CAN.ballTopMotor, MotorType.kBrushless);
 
   public YogaBallLauncher() {
-    leftMotor.setIdleMode(IdleMode.kBrake);
-    rightMotor.setIdleMode(IdleMode.kBrake);
+    bottomMotor.setIdleMode(IdleMode.kBrake);
+    topMotor.setIdleMode(IdleMode.kBrake);
 
-    leftMotor.burnFlash();
-    rightMotor.burnFlash();
+    bottomMotor.burnFlash();
+    topMotor.burnFlash();
   }
 
 
@@ -33,7 +33,7 @@ public class YogaBallLauncher extends SubsystemBase {
   }
 
   public void spinIntake(double volts){
-    leftMotor.setVoltage(volts);
-    rightMotor.setVoltage(-volts);
+    bottomMotor.setVoltage(volts);
+    topMotor.setVoltage(volts*3);
   }
 }
