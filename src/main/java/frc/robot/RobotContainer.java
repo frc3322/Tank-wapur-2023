@@ -9,6 +9,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.Shelf;
 import frc.robot.subsystems.YogaBallLauncher;
 import edu.wpi.first.math.MathUtil;
@@ -19,7 +20,9 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -27,13 +30,15 @@ import io.github.oblarg.oblog.Logger;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer implements Loggable {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private final YogaBallLauncher yogaBallLauncher = new YogaBallLauncher();
   private final Shelf shelfLeft = new Shelf(Constants.CAN.shelfMotorLeft, true);
   private final Shelf shelfRight = new Shelf(Constants.CAN.shelfMotorRight, false);
   private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController driverSecondaryController = new CommandXboxController(1);
+  private final Lifter forkLift = new Lifter();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Command driveCommand = new RunCommand(
@@ -69,11 +74,16 @@ public class RobotContainer {
 
     driverController.leftBumper().whileTrue(new StartEndCommand(()->yogaBallLauncher.spinIntake(-Constants.yogaBallConstants.yogaBallVolts), ()->yogaBallLauncher.spinIntake(0), yogaBallLauncher));
 
-    driverController.x().onTrue(new StartEndCommand(()->shelfRight.spinAxle(2), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(8)); // RETRACT
-    driverController.b().onTrue(new StartEndCommand(()->shelfRight.spinAxle(-2), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(8));
+    //secondary controller 
+    driverSecondaryController.x().onTrue(new StartEndCommand(()->shelfRight.spinAxle(Constants.shelfConstants.shelfMotorSpeed), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(Constants.CAN.shelfTimeout)); // RETRACT
+    driverSecondaryController.b().onTrue(new StartEndCommand(()->shelfRight.spinAxle(-Constants.shelfConstants.shelfMotorSpeed), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(Constants.CAN.shelfTimeout));
 
-    driverController.y().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(2), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(8)); // RETRACT
-    driverController.a().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(-2), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(8));
+    driverSecondaryController.y().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.CAN.shelfTimeout)); // RETRACT
+    driverSecondaryController.a().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(-Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.CAN.shelfTimeout));
+
+    driverSecondaryController.povUp().onTrue(new StartEndCommand(()->forkLift.lift(Constants.CAN.forkLiftVolts), ()-> forkLift.lift(0), forkLift).withTimeout(Constants.CAN.forkLiftTimeout));
+    driverSecondaryController.povDown().onTrue(new StartEndCommand(()->forkLift.lift(-Constants.CAN.forkLiftVolts), ()-> forkLift.lift(0), forkLift).withTimeout(Constants.CAN.forkLiftTimeout));
+
 
     drivetrain.setDefaultCommand(driveCommand);
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
