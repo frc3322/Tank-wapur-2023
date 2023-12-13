@@ -4,25 +4,15 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.Shelf;
 import frc.robot.subsystems.YogaBallLauncher;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
-import io.github.oblarg.oblog.Loggable;
-import io.github.oblarg.oblog.Logger;
-import io.github.oblarg.oblog.annotations;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -30,15 +20,14 @@ import io.github.oblarg.oblog.annotations;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
-public class RobotContainer implements Loggable {
+public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private final YogaBallLauncher yogaBallLauncher = new YogaBallLauncher();
-  private final Shelf shelfLeft = new Shelf(Constants.CAN.shelfMotorLeft, true);
-  private final Shelf shelfRight = new Shelf(Constants.CAN.shelfMotorRight, false);
+  private final Shelf shelfLeft = new Shelf(Constants.CAN.shelfMotorLeft);
+  private final Shelf shelfRight = new Shelf(Constants.CAN.shelfMotorRight);
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController driverSecondaryController = new CommandXboxController(1);
-  private final Lifter forkLift = new Lifter();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Command driveCommand = new RunCommand(
@@ -52,12 +41,6 @@ public class RobotContainer implements Loggable {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-    
-    Logger.configureLoggingAndConfig(this, false);
-  }
-
-  public void updateLogging(){
-    Logger.updateEntries();
   }
 
   /**
@@ -80,10 +63,6 @@ public class RobotContainer implements Loggable {
 
     driverSecondaryController.y().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.CAN.shelfTimeout)); // RETRACT
     driverSecondaryController.a().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(-Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.CAN.shelfTimeout));
-
-    driverSecondaryController.povUp().onTrue(new StartEndCommand(()->forkLift.lift(Constants.CAN.forkLiftVolts), ()-> forkLift.lift(0), forkLift).withTimeout(Constants.CAN.forkLiftTimeout));
-    driverSecondaryController.povDown().onTrue(new StartEndCommand(()->forkLift.lift(-Constants.CAN.forkLiftVolts), ()-> forkLift.lift(0), forkLift).withTimeout(Constants.CAN.forkLiftTimeout));
-
 
     drivetrain.setDefaultCommand(driveCommand);
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
