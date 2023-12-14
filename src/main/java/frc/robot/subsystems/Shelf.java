@@ -4,14 +4,31 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shelf extends SubsystemBase {
   /** Creates a new Shelf. */
-  public Shelf() {}
+  private final CANSparkMax axleMotor;
+
+  public Shelf(int CANid) {
+    axleMotor = new CANSparkMax(CANid, MotorType.kBrushless);
+
+    axleMotor.setIdleMode(IdleMode.kBrake);
+
+    axleMotor.burnFlash();
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+  }
+
+  public void spinAxle(double volts) {
+    axleMotor.setVoltage(volts);
   }
 }

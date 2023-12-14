@@ -29,8 +29,8 @@ public class Drivetrain extends SubsystemBase {
   private double speed = -2;
   private double turn = -2;
 
-  private final SlewRateLimiter accelLimit = new SlewRateLimiter(3);
-  private final SlewRateLimiter turnLimit = new SlewRateLimiter(5);
+  private final SlewRateLimiter accelLimit = new SlewRateLimiter(Constants.SlewAccelLimit);
+  private final SlewRateLimiter turnLimit = new SlewRateLimiter(Constants.SlewTurnLimit);
 
   // //Variables to log voltage
   double FLVoltageVal;

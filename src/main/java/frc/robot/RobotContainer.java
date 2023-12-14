@@ -4,14 +4,13 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Shelf;
+import frc.robot.subsystems.YogaBallLauncher;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -28,6 +27,11 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController driverSecondaryController = new CommandXboxController(1);
+
+  private final YogaBallLauncher yogaBallLauncher = new YogaBallLauncher();
+  private final Shelf shelfRight = new Shelf(Constants.CAN.shelfMotorRight);
+  private final Shelf shelfLeft = new Shelf(Constants.CAN.shelfMotorLeft);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Command driveCommand = new RunCommand(
@@ -41,7 +45,6 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-    
   }
 
   /**
@@ -54,9 +57,18 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
-    
-        drivetrain.setDefaultCommand(driveCommand);
+    driverController.rightBumper().whileTrue(new StartEndCommand(()->yogaBallLauncher.spinIntake(Constants.yogaBallConstants.yogaBallVolts), ()->yogaBallLauncher.spinIntake(0), yogaBallLauncher));
+
+    driverController.leftBumper().whileTrue(new StartEndCommand(()->yogaBallLauncher.spinIntake(-Constants.yogaBallConstants.yogaBallVolts), ()->yogaBallLauncher.spinIntake(0), yogaBallLauncher));
+
+    //secondary controller 
+    driverSecondaryController.x().onTrue(new StartEndCommand(()->shelfRight.spinAxle(Constants.shelfConstants.shelfMotorSpeed), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(Constants.CAN.shelfTimeout)); // RETRACT
+    driverSecondaryController.b().onTrue(new StartEndCommand(()->shelfRight.spinAxle(-Constants.shelfConstants.shelfMotorSpeed), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(Constants.CAN.shelfTimeout));
+
+    driverSecondaryController.y().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.CAN.shelfTimeout)); // RETRACT
+    driverSecondaryController.a().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(-Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.CAN.shelfTimeout));
+
+    drivetrain.setDefaultCommand(driveCommand);
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     
