@@ -21,13 +21,17 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  
+  
+
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
-  private final YogaBallLauncher yogaBallLauncher = new YogaBallLauncher();
-  private final Shelf shelfLeft = new Shelf(Constants.CAN.shelfMotorLeft);
-  private final Shelf shelfRight = new Shelf(Constants.CAN.shelfMotorRight);
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController driverSecondaryController = new CommandXboxController(1);
+
+  private final YogaBallLauncher yogaBallLauncher = new YogaBallLauncher();
+  private final Shelf shelfRight = new Shelf(Constants.CAN.shelfMotorRight);
+  private final Shelf shelfLeft = new Shelf(Constants.CAN.shelfMotorLeft);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Command driveCommand = new RunCommand(
