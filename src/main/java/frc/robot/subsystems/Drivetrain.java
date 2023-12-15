@@ -53,6 +53,15 @@ public class Drivetrain extends SubsystemBase implements Loggable {
    double BLVelocityVal;
    double BRVelocityVal;
   /** Creates a new Drivetrain. */
+
+
+  // DriveToDistance controller inputs
+  // Uses constants as initial values
+  private double driveP = Constants.DriveConstants.kDriveP;
+  private double driveI = Constants.DriveConstants.kDriveI;
+  private double driveD = Constants.DriveConstants.kDriveD;
+  private double maxDriveVelocity = Constants.DriveConstants.maxDriveVelocity;
+  private double maxDriveAcceleration = Constants.DriveConstants.maxDriveAcceleration;
   
   public Drivetrain() {
     motorFL.setInverted(true);
@@ -65,12 +74,23 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     motorBR.setIdleMode(IdleMode.kBrake);
     motorBL.setIdleMode(IdleMode.kBrake);
 
+    
+    FLEncoder.setPositionConversionFactor(0.4788/10.75);
+    FREncoder.setPositionConversionFactor(0.4788/10.75);
+    //meters per rotation, gear ratio
+    
+    FLEncoder.setVelocityConversionFactor(0.4788/10.75/60);
+    FREncoder.setVelocityConversionFactor(0.4788/10.75/60);
+    //meters per wheel rotation, gearing reduction, divide by 60 for per second
+
     motorFR.burnFlash();
     motorFL.burnFlash();
     motorBR.burnFlash();
     motorBL.burnFlash();
   }
 
+  // Getters
+  @Log
   public double getDistance() {
     return motorFR.getEncoder().getPosition();
   }
@@ -80,9 +100,51 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     return gyro.getYaw();
   }
 
+  @Log
+  public double getDriveP() {
+    return driveP;
+  }
+
+  @Log
+  public double getDriveI() {
+    return driveI;
+  }
+
+  @Log
+  public double getDriveD() {
+    return driveD;
+  }
+
+  @Log
+  public double getMaxDriveAccel() {
+    return maxDriveAcceleration;
+  }
+
+  @Log
+  public double getMaxDriveVel() {
+    return maxDriveVelocity;
+  }
+
   // Setters
   public void resetGyro() {
     gyro.reset();
+  }
+
+  @Config
+  public void setDrivePID(double p, double i, double d) {
+    driveP = p;
+    driveI = i;
+    driveD = d;
+  }
+
+  @Config
+  public void setMaxDriveVelocity(double velocity) {
+    maxDriveVelocity = velocity;
+  }
+
+  @Config
+  public void setMaxDriveAccel(double accel) {
+    maxDriveAcceleration = accel;
   }
 
   public void autonDrive(double speed, double turn) {

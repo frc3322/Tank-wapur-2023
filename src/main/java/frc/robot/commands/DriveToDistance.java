@@ -18,7 +18,7 @@ public class DriveToDistance extends ProfiledPIDCommand {
   /** Creates a new DriveToDistance. */
   public DriveToDistance(double targetDistance, Drivetrain drivetrain) {
     super(
-      new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI, Constants.DriveConstants.kDriveD, new TrapezoidProfile.Constraints(Constants.DriveConstants.maxDriveVelocity, Constants.DriveConstants.maxDriveAcceleration)),
+      new ProfiledPIDController(drivetrain.getDriveP(), drivetrain.getDriveI(), drivetrain.getDriveD(), new TrapezoidProfile.Constraints(drivetrain.getMaxDriveVel(), drivetrain.getMaxDriveAccel())),
         // Close loop on heading
         drivetrain::getDistance,
         // Set reference to target
@@ -51,6 +51,6 @@ public class DriveToDistance extends ProfiledPIDCommand {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.autonDrive(0, 0);;
+    drivetrain.autonDrive(0, 0);
   }
 }
