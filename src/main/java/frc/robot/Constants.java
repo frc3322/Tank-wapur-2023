@@ -21,7 +21,35 @@ public final class Constants {
     public static final int FL = 13;
     public static final int FR = 5;
     public static final int BL = 36;
-    public static final int BR = 42; // NOT FINAL - UPDATE WHEN AVAILABLE -
+    public static final int BR = 42;
+  }
+
+  public static final class DriveConstants {
+    public static final double kTurnP = 0.015;
+    public static final double kTurnI = 0;
+    public static final double kTurnD = 0.001;
+
+    public static final double kTurnToleranceDeg = 0.5;
+    public static final double kTurnRateToleranceDegPerS =5;
+
+    public static final double kDriveP = 0.1;
+    public static final double kDriveI = 0;
+    public static final double kDriveD = 0;
+    
+    public static final double kDriveToleranceMeters = 0.4;
+    public static final double kDriveRateToleranceMetersPerS =0.05;
+
+    public static final double maxDriveVelocity = 1;
+    public static final double maxDriveAcceleration = 5;
+
+    public static final double maxTurnVelocity = 250;
+    public static final double maxTurnAcceleration = 500;
+    //public static final double encoderTicsPerFoot = 6.84;
+
+
+    //0.00075 bad too slow
+    //
+  }
 
     // Shelf motor can id
     public static final int shelfMotorLeft = 37;

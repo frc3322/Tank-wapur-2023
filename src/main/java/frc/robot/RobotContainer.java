@@ -4,15 +4,24 @@
 
 package frc.robot;
 
+import frc.robot.commands.DriveToDistance;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Shelf;
 import frc.robot.subsystems.YogaBallLauncher;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Config;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -22,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   
-  
+  SendableChooser<Command> autChooser = new SendableChooser<>();
 
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
@@ -45,6 +54,22 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    
+    autChooser.addOption("drive distance test", new TestDriveDist());
+
+    autChooser.addOption("turn to angle test", new TestTurnToAngle());
+
+    autChooser.addOption("Test Auton", new TestAuton());
+    
+    SmartDashboard.putData("select autonomous", autChooser);
+
+    // The first argument is the root container
+    // The second argument is whether logging and config should be given separate tabs
+    Logger.configureLoggingAndConfig(this, false);
+  }
+
+  public void updateLogger() {
+    Logger.updateEntries();
   }
 
   /**
@@ -69,6 +94,7 @@ public class RobotContainer {
     driverSecondaryController.a().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(-Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.CAN.shelfTimeout));
 
     drivetrain.setDefaultCommand(driveCommand);
+
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     
@@ -81,6 +107,40 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return autChooser.getSelected();
+  }
+
+  private class TestDriveDist extends SequentialCommandGroup{
+    private TestDriveDist(){
+        addCommands(
+            new InstantCommand(
+              () -> drivetrain.resetEncoders(),
+               drivetrain
+            ),
+            new DriveToDistance(5, drivetrain)
+        );
+    }
+  }
+
+  private class TestTurnToAngle extends SequentialCommandGroup{
+    private TestTurnToAngle(){
+      addCommands(
+        new TurnToAngle(-90, drivetrain)
+      );
+    }
+  }
+
+  private class TestAuton extends SequentialCommandGroup{
+    private TestAuton(){
+      addCommands(
+        new InstantCommand(
+          () -> drivetrain.resetEncoders(),
+            drivetrain
+        ),
+        new DriveToDistance(5, drivetrain));
+
+      addCommands(
+      new TurnToAngle(180, drivetrain));
+    }
   }
 }
