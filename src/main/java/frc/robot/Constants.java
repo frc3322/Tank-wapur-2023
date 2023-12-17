@@ -22,6 +22,14 @@ public final class Constants {
     public static final int FR = 5;
     public static final int BL = 36;
     public static final int BR = 42;
+
+    // Shelf motor can id
+    public static final int shelfMotorLeft = 37;
+    public static final int shelfMotorRight = 40;
+
+    // yoga ball pickup/launcher
+    public static final int ballBottomMotor = 4;
+    public static final int ballTopMotor = 8;
   }
 
   public static final class DriveConstants {
@@ -46,35 +54,18 @@ public final class Constants {
     public static final double maxTurnAcceleration = 500;
     //public static final double encoderTicsPerFoot = 6.84;
 
+    // Drivetrain constants
+    public static final int SlewAccelLimit = 15;
+    public static final int SlewTurnLimit = 24;
 
-    //0.00075 bad too slow
-    //
   }
-
-    // Shelf motor can id
-    public static final int shelfMotorLeft = 37;
-    public static final int shelfMotorRight = 40;
-
-    // Forklift motor
-    public static final int forkLiftMotor = 100;
-    public static final int forkLiftVolts = 3;
-
-    // Timeouts for shelf and forklift
-    public static final int shelfTimeout = 9;
-    public static final int forkLiftTimeout = 5;
-    
-    // yoga ball pickup/launcher
-    public static final int ballBottomMotor = 4;
-    public static final int ballTopMotor = 8;
-  }
-
-  // Drivetrain constants
-  public static final int SlewAccelLimit = 15;
-  public static final int SlewTurnLimit = 24;
 
   public static final class shelfConstants {
     // Motor speed of the shelf extension motor, negated when retracting
     public static final int shelfMotorSpeed = 2;
+
+    // Timeouts for shelf
+    public static final int shelfTimeout = 7;
 
     // Limit in encoder whatever units untill the pusher is fully extended
     public static final int shelfExtensionLimit = 50;

@@ -42,6 +42,29 @@ public class RobotContainer {
   private final Shelf shelfRight = new Shelf(Constants.CAN.shelfMotorRight);
   private final Shelf shelfLeft = new Shelf(Constants.CAN.shelfMotorLeft);
 
+  private final Command timedDriveAuto = new RunCommand(
+    () -> {
+      drivetrain.tankDriveVolts(1.24, 1.24);
+    }, drivetrain).withTimeout(10);
+
+  // private class timedDriveAuto extends SequentialCommandGroup{
+  //   private timedDriveAuto(){
+  //       addCommands(
+  //           new InstantCommand(
+  //             () -> drivetrain.tankDriveVolts(1, 1),
+  //              drivetrain
+  //           ),
+  //           new InstantCommand(
+  //             () -> drivetrain.tankDriveVolts(1.2, 1.2),
+  //              drivetrain
+  //           ),
+  //           new InstantCommand(
+  //             () -> drivetrain.tankDriveVolts(0.75, 0.75), drivetrain)  
+  //       );
+  //   }
+  // }
+
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Command driveCommand = new RunCommand(
       () -> {
@@ -87,12 +110,16 @@ public class RobotContainer {
     driverController.leftBumper().whileTrue(new StartEndCommand(()->yogaBallLauncher.spinIntake(-Constants.yogaBallConstants.yogaBallVolts), ()->yogaBallLauncher.spinIntake(0), yogaBallLauncher));
 
     //secondary controller 
-    driverSecondaryController.x().onTrue(new StartEndCommand(()->shelfRight.spinAxle(Constants.shelfConstants.shelfMotorSpeed), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(Constants.CAN.shelfTimeout)); // RETRACT
-    driverSecondaryController.b().onTrue(new StartEndCommand(()->shelfRight.spinAxle(-Constants.shelfConstants.shelfMotorSpeed), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(Constants.CAN.shelfTimeout));
+    driverSecondaryController.x().onTrue(new StartEndCommand(()->shelfRight.spinAxle(Constants.shelfConstants.shelfMotorSpeed), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(Constants.shelfConstants.shelfTimeout)); // RETRACT
+    driverSecondaryController.b().onTrue(new StartEndCommand(()->shelfRight.spinAxle(-Constants.shelfConstants.shelfMotorSpeed), ()->shelfRight.spinAxle(0), shelfRight).withTimeout(Constants.shelfConstants.shelfTimeout));
 
-    driverSecondaryController.y().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.CAN.shelfTimeout)); // RETRACT
-    driverSecondaryController.a().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(-Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.CAN.shelfTimeout));
+    driverSecondaryController.y().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.shelfConstants.shelfTimeout)); // RETRACT
+    driverSecondaryController.a().onTrue(new StartEndCommand(()->shelfLeft.spinAxle(-Constants.shelfConstants.shelfMotorSpeed), ()->shelfLeft.spinAxle(0), shelfLeft).withTimeout(Constants.shelfConstants.shelfTimeout));
 
+     // Yogaball launcher controls for Secondary Controller
+     driverSecondaryController.rightBumper().whileTrue(new StartEndCommand(()->yogaBallLauncher.spinIntake(Constants.yogaBallConstants.yogaBallVolts), ()->yogaBallLauncher.spinIntake(0), yogaBallLauncher));
+     driverSecondaryController.leftBumper().whileTrue(new StartEndCommand(()->yogaBallLauncher.spinIntake(-Constants.yogaBallConstants.yogaBallVolts), ()->yogaBallLauncher.spinIntake(0), yogaBallLauncher));
+ 
     drivetrain.setDefaultCommand(driveCommand);
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
@@ -107,7 +134,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return autChooser.getSelected();
+    return timedDriveAuto;
   }
 
   private class TestDriveDist extends SequentialCommandGroup{

@@ -37,8 +37,8 @@ public class Drivetrain extends SubsystemBase implements Loggable {
   private double speed = -2;
   private double turn = -2;
 
-  private final SlewRateLimiter accelLimit = new SlewRateLimiter(Constants.SlewAccelLimit);
-  private final SlewRateLimiter turnLimit = new SlewRateLimiter(Constants.SlewTurnLimit);
+  private final SlewRateLimiter accelLimit = new SlewRateLimiter(Constants.DriveConstants.SlewAccelLimit);
+  private final SlewRateLimiter turnLimit = new SlewRateLimiter(Constants.DriveConstants.SlewTurnLimit);
 
   // //Variables to log voltage
   double FLVoltageVal;
@@ -69,10 +69,11 @@ public class Drivetrain extends SubsystemBase implements Loggable {
     motorBR.follow(motorFR);
     motorBL.follow(motorFL);
 
-    motorFR.setIdleMode(IdleMode.kBrake);
-    motorFL.setIdleMode(IdleMode.kBrake);
-    motorBR.setIdleMode(IdleMode.kBrake);
-    motorBL.setIdleMode(IdleMode.kBrake);
+  // Motors set to coast instead of break in order to prevent sudden stopping of bot when disabling
+    motorFR.setIdleMode(IdleMode.kCoast);
+    motorFL.setIdleMode(IdleMode.kCoast);
+    motorBR.setIdleMode(IdleMode.kCoast);
+    motorBL.setIdleMode(IdleMode.kCoast);
 
     
     FLEncoder.setPositionConversionFactor(0.4788/10.75);
